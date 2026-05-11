@@ -1,9 +1,8 @@
 services:
-  # Backend API
   - type: web
     name: ai-chatbot-api
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python -c "from src.core.data_processor import DataProcessor; dp = DataProcessor(); dp.process()"
     startCommand: uvicorn src.api.main:app --host 0.0.0.0 --port 10000
     envVars:
       - key: GROQ_API_KEY
@@ -15,9 +14,4 @@ services:
       - key: LANGSMITH_PROJECT
         sync: false
 
-  # Frontend
-  - type: web
-    name: ai-chatbot-frontend
-    env: python
-    buildCommand: pip install -r requirements-frontend.txt
-    startCommand: streamlit run frontend/app.py --server.port 10000 --server.address 0.0.0.0
+    
