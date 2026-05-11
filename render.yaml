@@ -1,4 +1,5 @@
 services:
+  # Backend API
   - type: web
     name: ai-chatbot-api
     env: python
@@ -13,3 +14,10 @@ services:
         sync: false
       - key: LANGSMITH_PROJECT
         sync: false
+
+  # Frontend
+  - type: web
+    name: ai-chatbot-frontend
+    env: python
+    buildCommand: pip install -r requirements-frontend.txt
+    startCommand: streamlit run frontend/app.py --server.port 10000 --server.address 0.0.0.0
