@@ -1,0 +1,11 @@
+.env
+*.nv
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+data/processed/
+data/vectorestore/
+logs/
+.DS_Store
+Thumbs.db
