@@ -9,3 +9,9 @@ data/vectorestore/
 logs/
 .DS_Store
 Thumbs.db
+lib/
+lib64/
+site-packages/
+__pycache__/
+*.pyc
+.python-version
