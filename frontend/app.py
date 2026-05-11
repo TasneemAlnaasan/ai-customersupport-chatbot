@@ -90,7 +90,7 @@ if user_input:
                     "message": user_input,
                     "provider": provider
                 },
-                timeout=30
+                timeout=120
             )
             elapsed = time.time() - start
 
