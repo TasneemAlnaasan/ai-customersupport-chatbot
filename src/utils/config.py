@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     groq_model: str = "llama-3.1-8b-instant"
     gemini_model: str = "gemini-2.0-flash"
 
+    # Langsmith Monitoring
+    langsmith_api_key: str = ""
+    langsmith_project: str = "ai-chatbot"
+    langsmith_tracing: bool = True
+
     # App Settings
     app_env: str = "development"
     log_level: str = "INFO"
