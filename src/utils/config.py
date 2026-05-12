@@ -4,13 +4,13 @@ from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # LLM Providers
+    # LLM Provider
     groq_api_key: str = ""
-    gemini_api_key: str = ""
+    
 
-    # Virtual model for each provider
+    # Virtual model for the provider
     groq_model: str = "llama-3.1-8b-instant"
-    gemini_model: str = "gemini-2.0-flash"
+    
 
     # Langsmith Monitoring
     langsmith_api_key: str = ""

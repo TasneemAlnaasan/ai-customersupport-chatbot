@@ -45,13 +45,8 @@ with col2:
     st.metric("عدد الأسئلة", st.session_state.total_queries)
     st.divider()
 
-    # اختيار المزود
-    provider = st.selectbox(
-        "🤖 اختر الـ AI",
-        ["groq", "gemini"],
-        index=0
-    )
-    st.divider()
+    #  المزود
+    provider = "groq"
 
     # أسئلة مقترحة
     st.markdown("💡 **أسئلة مقترحة**")

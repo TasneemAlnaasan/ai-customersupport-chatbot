@@ -9,7 +9,7 @@ from pydantic import BaseModel
 class ChatRequest(BaseModel):
     """شكل طلب المستخدم"""
     message: str
-    provider: str = "groq"  # groq أو gemini
+    provider: str = "groq"  
 
     class Config:
         json_schema_extra = {
