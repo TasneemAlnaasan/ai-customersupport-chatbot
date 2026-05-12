@@ -6,6 +6,21 @@ app.py: واجهة المستخدم
 import streamlit as st
 import requests
 import time
+import threading
+import time
+
+def keep_alive():
+    """يصحّي Backend كل 10 دقائق"""
+    while True:
+        try:
+            requests.get(f"{API_URL}/health", timeout=10)
+        except:
+            pass
+        time.sleep(600)  # كل 10 دقائق
+
+# شغّل في الخلفية
+thread = threading.Thread(target=keep_alive, daemon=True)
+thread.start()
 
 # ===== إعداد الصفحة =====
 st.set_page_config(
