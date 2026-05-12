@@ -62,7 +62,7 @@ with col2:
             st.session_state.pending = q
 
 # ===== معالجة السؤال =====
-API_URL = "https://ai-customersupport-chatbot.onrender.com"
+API_URL = "https://ai-customersupport-chatbot-frontend2.onrender.com"
 
 user_input = st.chat_input("اكتب سؤالك هنا...")
 
