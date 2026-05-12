@@ -6,6 +6,7 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # LLM Provider
     groq_api_key: str = ""
+    gemini_api_key: str =""
     
 
     # Virtual model for the provider

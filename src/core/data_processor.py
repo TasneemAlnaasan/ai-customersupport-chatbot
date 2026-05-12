@@ -2,10 +2,10 @@
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
 from src.utils.logger import get_logger
 from src.utils.config import settings
 import os
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 logger = get_logger(__name__)
 
@@ -13,9 +13,9 @@ logger = get_logger(__name__)
 class DataProcessor:
     def __init__(self):
         logger.info("Loading Embeddings Model...")
-        self.embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={"device": "cpu"}
+        self.embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/gemini-embedding-001",
+            google_api_key=settings.gemini_api_key
         )
 
         self.text_splitter = RecursiveCharacterTextSplitter(
