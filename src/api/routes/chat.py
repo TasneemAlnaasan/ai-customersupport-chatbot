@@ -9,36 +9,20 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 router = APIRouter()
 
-# نحفظ RAG Pipeline في الذاكرة
-# حتى لا ننشئه من جديد كل طلب
-rag_pipelines = {}
-
 
 def get_rag_pipeline(provider: str):
-    """
-    يرجع RAG Pipeline جاهز
-    ينشئه فقط أول مرة
-    """
-    if provider not in rag_pipelines:
-        from src.core.rag_pipeline import RAGPipeline
-        logger.info(f"إنشاء RAG Pipeline: {provider}")
-        rag_pipelines[provider] = RAGPipeline(provider=provider)
-    return rag_pipelines[provider]
+    from src.api.main import rag_instance
+    if rag_instance:
+        return rag_instance
+    from src.core.rag_pipeline import RAGPipeline
+    return RAGPipeline(provider=provider)
 
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    """
-    Endpoint الرئيسي للمحادثة
-    يستقبل سؤال ويرجع إجابة
-    """
     try:
         logger.info(f"سؤال جديد: {request.message}")
-
-        # جلب أو إنشاء RAG Pipeline
         rag = get_rag_pipeline(request.provider)
-
-        # الحصول على الإجابة
         result = rag.chat(request.message)
 
         return ChatResponse(

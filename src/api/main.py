@@ -8,19 +8,41 @@ from src.api.routes import chat, health
 from src.utils.logger import setup_logger, get_logger
 import os 
 from src.utils.config import settings
+from contextlib import asynccontextmanager
+from src.core.rag_pipeline import RAGPipeline
 
 # إعداد الـ Logger
 setup_logger()
 logger = get_logger(__name__)
 
+# تفعيل LangSmith
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = settings.langsmith_api_key
+os.environ["LANGCHAIN_PROJECT"] = settings.langsmith_project
+
+# RAG Pipeline العام
+rag_instance = None
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # عند بدء التشغيل
+    global rag_instance
+    logger.info("تحميل RAG Pipeline...")
+    rag_instance = RAGPipeline(provider="groq")
+    logger.info("✅ RAG Pipeline جاهز!")
+    yield
+    # عند الإيقاف
+    logger.info("إيقاف التطبيق...")
+
 # إنشاء التطبيق
 app = FastAPI(
     title="AI Customer Support Chatbot",
     description="Chatbot مدعوم بـ RAG",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
-# CORS: يسمح للـ Frontend بالتواصل مع الـ API
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -31,12 +53,9 @@ app.add_middleware(
 # تسجيل الـ Routes
 app.include_router(health.router)
 app.include_router(chat.router)
-
-
-@app.get("/")
+@app.get("/"):
 async def root():
-    return {"message": "🤖 AI Chatbot API يعمل!"}
-
+    return {"message": "AI Chtbot API يعمل"}
 
 
 # تفعيل LangSmith Monitoring
