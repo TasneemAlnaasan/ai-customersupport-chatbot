@@ -53,7 +53,7 @@ app.add_middleware(
 # تسجيل الـ Routes
 app.include_router(health.router)
 app.include_router(chat.router)
-@app.get("/"):
+@app.get("/")
 async def root():
     return {"message": "AI Chtbot API يعمل"}
 
