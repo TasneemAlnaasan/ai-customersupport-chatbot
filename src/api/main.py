@@ -57,8 +57,9 @@ app.include_router(chat.router)
 async def root():
     return {"message": "AI Chtbot API يعمل"}
 
-
-# تفعيل LangSmith Monitoring
+async def health-check():
+    return {"status": "online"}
+    
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = settings.langsmith_api_key
 os.environ["LANGCHAIN_PROJECT"] = settings.langsmith_project
