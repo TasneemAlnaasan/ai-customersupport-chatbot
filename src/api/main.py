@@ -26,10 +26,10 @@ rag_instance = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # عند بدء التشغيل
-    global rag_instance
     logger.info("تحميل RAG Pipeline...")
-    rag_instance = RAGPipeline(provider="groq")
-    logger.info("✅ RAG Pipeline جاهز!")
+    # إنشاء الـ instance وتخزينه في الـ state
+    app.state.rag_pipeline = RAGPipeline(provider="groq")
+    logger.info("✅ RAG Pipeline جاهز في الـ State!")
     yield
     # عند الإيقاف
     logger.info("إيقاف التطبيق...")

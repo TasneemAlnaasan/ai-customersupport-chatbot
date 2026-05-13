@@ -1,28 +1,23 @@
-"""
-chat.py: مسار المحادثة الرئيسي
-"""
-
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request # أضف Request
 from src.api.models import ChatRequest, ChatResponse
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 router = APIRouter()
 
-
-def get_rag_pipeline(provider: str):
-    from src.api.main import rag_instance
-    if rag_instance:
-        return rag_instance
-    from src.core.rag_pipeline import RAGPipeline
-    return RAGPipeline(provider=provider)
-
-
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+async def chat(request: ChatRequest, fastapi_req: Request): # أضف fastapi_req هنا
     try:
         logger.info(f"سؤال جديد: {request.message}")
-        rag = get_rag_pipeline(request.provider)
+        
+        # الوصول للـ Pipeline المخزن في الـ App State
+        rag = getattr(fastapi_req.app.state, "rag_pipeline", None)
+        
+        if not rag:
+            logger.error("RAG Pipeline غير محمل في الـ State")
+            raise HTTPException(status_code=503, detail="Pipeline is still loading...")
+
+        # تنفيذ المحادثة
         result = rag.chat(request.message)
 
         return ChatResponse(
