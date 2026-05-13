@@ -57,7 +57,8 @@ app.include_router(chat.router)
 async def root():
     return {"message": "AI Chtbot API يعمل"}
 
-async def health-check():
+@app.get("/")
+async def health_check():
     return {"status": "online"}
     
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
