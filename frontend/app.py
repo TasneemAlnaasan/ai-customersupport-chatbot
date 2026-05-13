@@ -106,20 +106,22 @@ if user_input:
 
             if response.status_code == 200:
                 data = response.json()
-
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": data["answer"],
                     "sources": data["sources"]
                 })
-
                 st.session_state.total_queries += 1
                 st.toast(f"✅ إجابة في {elapsed:.1f} ثانية")
 
             else:
-                st.error("حدث خطأ في الـ API")
+                st.error(f"خطأ {response.status_code}: {response.text}")
 
         except requests.exceptions.ConnectionError:
-            st.error("❌ تأكد أن الـ API يعمل على Port 8000")
+            st.error("❌ لا يمكن الاتصال بالـ API")
+        except requests.exceptions.Timeout:
+            st.error("❌ انتهى وقت الانتظار")
+        except Exception as e:
+            st.error(f"❌ خطأ: {str(e)}")
 
     st.rerun()
