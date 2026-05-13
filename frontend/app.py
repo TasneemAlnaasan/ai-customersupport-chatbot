@@ -3,66 +3,72 @@ import requests
 import time
 import threading
 
-# 1. وضع الرابط في البداية لتجنب أخطاء التعريف
 API_URL = "https://ai-customersupport-chatbot.onrender.com"
 
-def keep_alive():
-    """يصحّي Backend كل 10 دقائق"""
-    while True:
-        try:
-            # تأكد أن الـ Backend لديه مسار باسم / أو /health
-            requests.get(f"{API_URL}/", timeout=10)
-        except:
-            pass
-        time.sleep(600)
-
-# شغّل الـ Thread مرة واحدة فقط باستخدام st.cache_resource لمنع تكراره مع كل rerun
+# منع تكرار الـ Thread
 @st.cache_resource
 def start_keep_alive():
+    def keep_alive():
+        while True:
+            try:
+                requests.get(f"{API_URL}/", timeout=5)
+            except:
+                pass
+            time.sleep(600)
+    
     thread = threading.Thread(target=keep_alive, daemon=True)
     thread.start()
     return True
 
 start_keep_alive()
 
-# ===== إعداد الصفحة =====
-st.set_page_config(
-    page_title="TechBot Support",
-    page_icon="🤖",
-    layout="wide"
-)
+# إعدادات الواجهة
+st.set_page_config(page_title="TechBot Support", page_icon="🤖")
+st.title("🤖 TechBot Customer Support")
 
-# ... (باقي كود الواجهة كما هو) ...
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# عند معالجة السؤال، تأكد من طباعة الخطأ إذا فشل
+# عرض المحادثة
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
+        if msg["role"] == "assistant" and msg.get("sources"):
+            with st.expander("📚 المصادر"):
+                for s in msg["sources"]:
+                    st.info(f"{s['source']}: {s['content']}")
+
+# مدخلات المستخدم
+user_input = st.chat_input("كيف يمكنني مساعدتك اليوم؟")
+
 if user_input:
+    # 1. عرض سؤال المستخدم فوراً
     st.session_state.messages.append({"role": "user", "content": user_input})
-    
+    with st.chat_message("user"):
+        st.write(user_input)
+
+    # 2. طلب الرد من الـ API
     with st.spinner("🤔 جاري التفكير..."):
         try:
-            # أضف / في نهاية الرابط إذا كان الـ Backend يتطلب ذلك
-            target_url = f"{API_URL}/chat"
-            
             response = requests.post(
-                target_url,
+                f"{API_URL}/chat",
                 json={
                     "message": user_input,
-                    "provider": "groq" # القيمة الافتراضية
+                    "provider": "groq"
                 },
-                timeout=120
+                timeout=150 # وقت طويل لأن Render المجاني بطيء في البداية
             )
             
             if response.status_code == 200:
                 data = response.json()
+                # إضافة رد البوت للذاكرة
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": data["answer"],
                     "sources": data.get("sources", [])
                 })
-                st.session_state.total_queries += 1
-                st.rerun() # تحديث الصفحة لعرض الرد
+                st.rerun() # لإعادة بناء الواجهة وعرض الرد الجديد
             else:
-                st.error(f"الخادم استجاب بخطأ {response.status_code}: {response.text}")
-        
+                st.error(f"خطأ من الخادم ({response.status_code}): {response.text}")
         except Exception as e:
-            st.error(f"فشل الاتصال: {str(e)}")
+            st.error(f"حدث خطأ في الاتصال: {e}")
