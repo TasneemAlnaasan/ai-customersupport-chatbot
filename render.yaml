@@ -1,20 +1,22 @@
 services:
   - type: web
     name: ai-chatbot-api
-    env: python
-    buildCommand: pip install -r requirements.txt && rm -rf data/vectorstore && python -c "from src.core.data_processor import DataProcessor; dp = DataProcessor(); dp.process()"
-    startCommand: uvicorn src.api.main:app --host 0.0.0.0 --port 10000
+    env: docker
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
         sync: false
       - key: LANGSMITH_API_KEY
         sync: false
       - key: LANGSMITH_PROJECT
         sync: false
-  # Frontend
+
   - type: web
     name: ai-chatbot-frontend
     env: python
-    buildCommand: pip install -r requirements-frontend.txt
-    startCommand: streamlit run frontend/app.py --server.port 10000 --server.address 0.0.0.0
-    
+    buildCommand: pip install streamlit requests
+    startCommand: streamlit run frontend/app.py --server.port 10000 --server.address 0.0.0.0 --server.headless true
