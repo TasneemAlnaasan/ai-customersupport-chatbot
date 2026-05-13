@@ -1,11 +1,10 @@
 """
 rag_pipeline.py: القلب الحقيقي للـ Chatbot
-نسخة محدثة بدون ConversationalRetrievalChain
+يستخدم Pinecone بدل ChromaDB
 """
 
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
 from src.core.data_processor import DataProcessor
 from src.core.llm_handler import LLMHandler
 from src.utils.logger import get_logger
@@ -14,24 +13,20 @@ from src.utils.config import settings
 logger = get_logger(__name__)
 
 
-PROMPT_TEMPLATE = """أنت مساعد خدمة عملاء ذكي لشركة TechBot Solutions.
-مهمتك: الإجابة على أسئلة العملاء بدقة واحترافية.
+PROMPT_TEMPLATE = """You are a helpful customer support assistant for TechBot Solutions.
+Answer questions based ONLY on the context provided.
+If you don't know, say: please contact support@techbot.com
+Answer in the same language the user uses.
 
-القواعد:
-1. أجب فقط بناءً على المعلومات في السياق
-2. إذا لم تجد الإجابة قل: يرجى التواصل مع support@techbot.com
-3. كن ودياً ومختصراً
-4. أجب باللغة التي يسأل بها المستخدم
-
-السياق:
+Context:
 {context}
 
-تاريخ المحادثة:
+Chat History:
 {chat_history}
 
-السؤال: {question}
+Question: {question}
 
-الإجابة:"""
+Answer:"""
 
 
 class RAGPipeline:
@@ -44,14 +39,13 @@ class RAGPipeline:
         self._setup()
 
     def _setup(self):
-
-        # 1. تحميل ChromaDB
-        logger.info("تحميل ChromaDB...")
+        # 1. تحميل Pinecone
+        logger.info("تحميل Pinecone...")
         processor = DataProcessor()
         vectorstore = processor.load_vectorstore()
 
         if not vectorstore:
-            raise Exception("ChromaDB غير موجودة!")
+            raise Exception("Pinecone غير موجود!")
 
         # 2. Retriever
         self.retriever = vectorstore.as_retriever(
@@ -67,14 +61,11 @@ class RAGPipeline:
         logger.info("✅ RAG Pipeline جاهز!")
 
     def _format_docs(self, docs):
-        """تحويل الـ docs لنص واحد"""
         return "\n\n".join(doc.page_content for doc in docs)
 
     def _format_history(self):
-        """تحويل تاريخ المحادثة لنص"""
         if not self.chat_history:
             return ""
-        
         history_text = ""
         for question, answer in self.chat_history:
             history_text += f"User: {question}\nAssistant: {answer}\n\n"
@@ -84,7 +75,7 @@ class RAGPipeline:
         try:
             logger.info(f"سؤال: {question}")
 
-            # 1. البحث في ChromaDB
+            # 1. البحث في Pinecone
             docs = self.retriever.invoke(question)
             context = self._format_docs(docs)
             history = self._format_history()

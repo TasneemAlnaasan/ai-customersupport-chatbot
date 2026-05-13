@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     # LLM Provider
     groq_api_key: str = ""
     gemini_api_key: str =""
+    pinecone_api_key: str=""
     
 
     # Virtual model for the provider
