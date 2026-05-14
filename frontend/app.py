@@ -3,6 +3,12 @@ import requests
 import time
 import threading
 
+st.set_page_config(
+    page_title="TechBot Customer Support", 
+    page_icon="🤖",
+    layout="wide"
+)
+
 API_URL = "https://ai-customersupport-chatbot.onrender.com"
 
 @st.cache_resource
@@ -21,8 +27,6 @@ def start_keep_alive():
 
 start_keep_alive()
 
-st.set_page_config(page_title="TechBot Support", page_icon="🤖")
-st.title("🤖 TechBot Customer Support")
 
 # تهيئة الذاكرة
 if "messages" not in st.session_state:
