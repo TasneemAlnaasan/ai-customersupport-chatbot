@@ -13,8 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # نسخ كل الكود
 COPY . .
 
-# بناء ChromaDB عند البناء
-RUN python -c "from src.core.data_processor import DataProcessor; dp = DataProcessor(); dp.process()"
 
 # تشغيل التطبيق
 CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "10000"]
