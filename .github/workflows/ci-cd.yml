@@ -39,7 +39,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true
+
+      - name: Remove large files from history
+        run: |
+          git filter-branch --force --index-filter \
+          "git rm -rf --cached --ignore-unmatch data/vectorstore/" \
+          --prune-empty --tag-name-filter cat -- --all
 
       - name: Deploy to Hugging Face
         env:
