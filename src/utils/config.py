@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     
 
     # Virtual model for the provider
-    groq_model: str = "llama-3.1-8b-instant"
+    groq_model: str = "llama-3.3-70b-versatile"
     
 
     # Langsmith Monitoring
