@@ -55,7 +55,7 @@ with col2:
             st.session_state.pending = q
 
 with col1:
-    # عرض المحادثة
+    # Display conversation
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
@@ -64,7 +64,7 @@ with col1:
                     for s in msg["sources"]:
                         st.info(f"📄 {s.get('source', 'Unknown')}\n\n{s.get('content', '')}")
 
-# ===== معالجة السؤال =====
+# ===== Question processing ====
 user_input = st.chat_input("كيف يمكنني مساعدتك اليوم؟")
 
 if "pending" in st.session_state:
@@ -74,7 +74,7 @@ if "pending" in st.session_state:
 if user_input:
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    with st.spinner("🤔 جاري التفكير..."):
+    with st.spinner("🤔 جاري البحث عن الاجابة..."):
         try:
             response = requests.post(
                 f"{API_URL}/chat",

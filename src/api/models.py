@@ -1,13 +1,8 @@
-"""
-models.py: شكل البيانات
-يحدد ما يدخل ويخرج من الـ API
-"""
 
 from pydantic import BaseModel
 
 
 class ChatRequest(BaseModel):
-    """شكل طلب المستخدم"""
     message: str
     provider: str = "groq"  
 
@@ -21,7 +16,6 @@ class ChatRequest(BaseModel):
 
 
 class ChatResponse(BaseModel):
-    """شكل الإجابة"""
     answer: str
     sources: list
     success: bool

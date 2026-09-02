@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request # أضف Request
+from fastapi import APIRouter, HTTPException, Request 
 from src.api.models import ChatRequest, ChatResponse
 from src.utils.logger import get_logger
 
@@ -6,18 +6,16 @@ logger = get_logger(__name__)
 router = APIRouter()
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest, fastapi_req: Request): # أضف fastapi_req هنا
+async def chat(request: ChatRequest, fastapi_req: Request): 
     try:
         logger.info(f"سؤال جديد: {request.message}")
-        
-        # الوصول للـ Pipeline المخزن في الـ App State
         rag = getattr(fastapi_req.app.state, "rag_pipeline", None)
         
         if not rag:
             logger.error("RAG Pipeline غير محمل في الـ State")
             raise HTTPException(status_code=503, detail="Pipeline is still loading...")
 
-        # تنفيذ المحادثة
+        
         result = rag.chat(request.message)
 
         return ChatResponse(

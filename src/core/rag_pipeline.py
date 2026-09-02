@@ -1,7 +1,3 @@
-"""
-rag_pipeline.py: القلب الحقيقي للـ Chatbot
-يستخدم Pinecone بدل ChromaDB
-"""
 
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -39,7 +35,7 @@ class RAGPipeline:
         self._setup()
 
     def _setup(self):
-        # 1. تحميل Pinecone
+        # 1. Loading Pinecone
         logger.info("تحميل Pinecone...")
         processor = DataProcessor()
         vectorstore = processor.load_vectorstore()
@@ -53,7 +49,7 @@ class RAGPipeline:
             search_kwargs={"k": settings.retriever_k}
         )
 
-        # 3. تحميل LLM
+        # 3. Loading LLM
         logger.info(f"تحميل LLM: {self.provider}")
         llm_handler = LLMHandler()
         self.llm = llm_handler.get_llm(self.provider)
@@ -75,18 +71,18 @@ class RAGPipeline:
         try:
             logger.info(f"سؤال: {question}")
 
-            # 1. البحث في Pinecone
+            # 1.Searching in Pinecone
             docs = self.retriever.invoke(question)
             context = self._format_docs(docs)
             history = self._format_history()
 
-            # 2. بناء الـ Prompt
+            # 2. Building Prompt
             prompt_template = PromptTemplate(
                 input_variables=["context", "chat_history", "question"],
                 template=PROMPT_TEMPLATE
             )
 
-            # 3. إرسال للـ LLM
+            # 3. Sending to LLM
             chain = prompt_template | self.llm | StrOutputParser()
             answer = chain.invoke({
                 "context": context,
@@ -94,12 +90,12 @@ class RAGPipeline:
                 "question": question
             })
 
-            # 4. حفظ في التاريخ
+            # 4. Storing in chat history
             self.chat_history.append((question, answer))
             if len(self.chat_history) > 5:
                 self.chat_history = self.chat_history[-5:]
 
-            # 5. استخراج المصادر
+            # 5. Source extraction
             sources = []
             for doc in docs:
                 sources.append({

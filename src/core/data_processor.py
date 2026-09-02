@@ -1,7 +1,3 @@
-"""
-data_processor.py: معالج البيانات
-يستخدم Pinecone بدل ChromaDB
-"""
 
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -53,17 +49,17 @@ class DataProcessor:
         return documents
 
     def process(self):
-        # 1. تحميل الملفات
+        # 1. Files Loading
         documents = self.load_documents()
         if not documents:
             logger.warning("لا توجد ملفات!")
             return None
 
-        # 2. تقسيم النص
+        # 2.  Text splitting
         chunks = self.text_splitter.split_documents(documents)
         logger.info(f"تم إنشاء {len(chunks)} chunk")
 
-        # 3. حفظ في Pinecone
+        # 3. Store in Pinecone
         logger.info("حفظ في Pinecone...")
         import os
         os.environ["PINECONE_API_KEY"] = settings.pinecone_api_key

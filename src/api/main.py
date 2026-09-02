@@ -1,6 +1,4 @@
-"""
-main.py: نقطة البداية للـ API
-"""
+
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,7 +12,6 @@ import os
 setup_logger()
 logger = get_logger(__name__)
 
-# تفعيل LangSmith
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = settings.langsmith_api_key
 os.environ["LANGCHAIN_PROJECT"] = settings.langsmith_project

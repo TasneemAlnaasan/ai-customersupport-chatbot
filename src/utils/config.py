@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     
 
     # Virtual model for the provider
-    groq_model: str = "openai/gpt-oss-20b"
+    groq_model: str = "llama-3.1-8b-instant"
     
 
     # Langsmith Monitoring

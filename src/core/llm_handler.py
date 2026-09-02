@@ -1,6 +1,3 @@
-"""
-llm_handler.py: مسؤول عن التواصل مع Groq
-"""
 
 from langchain_groq import ChatGroq
 from src.utils.logger import get_logger
