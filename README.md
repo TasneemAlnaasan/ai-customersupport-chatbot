@@ -39,7 +39,7 @@ pinned: false
 
 ## 🌐 Live Demo
 
-- **Frontend:** https://ai-customersupport-chatbot-frontend.onrender.com 
+- **Frontend:** https://tsneemk-ai-chatbot.hf.space 
 - **Backend API:** https://ai-customersupport-chatbot.onrender.com/docs
 
 ---
