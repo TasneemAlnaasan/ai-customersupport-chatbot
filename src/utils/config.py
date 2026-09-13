@@ -12,7 +12,7 @@ class Settings(BaseSettings):
 
     # Virtual model for the provider
     groq_model: str = "openai/gpt-oss-20b"
-    
+    gemini_embedding_model: str = "models/gemini-embedding-001"
 
     # Langsmith Monitoring
     langsmith_api_key: str = ""

@@ -6,7 +6,7 @@ from langchain_pinecone import PineconeVectorStore
 from src.utils.logger import get_logger
 from src.utils.config import settings
 from pinecone import Pinecone
-
+import os 
 
 logger = get_logger(__name__)
 
@@ -18,12 +18,11 @@ class DataProcessor:
 
         # Gemini Embeddings
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/gemini-embedding-001",
+            model=settings.gemini_embedding_model,
             google_api_key=settings.gemini_api_key
         )
 
         # Pinecone Client
-        self.pc = Pinecone(api_key=settings.pinecone_api_key)
         self.index_name = "chatbot-index"
 
         # Text Splitter
@@ -61,7 +60,7 @@ class DataProcessor:
 
         # 3. Store in Pinecone
         logger.info("حفظ في Pinecone...")
-        import os
+    
         os.environ["PINECONE_API_KEY"] = settings.pinecone_api_key
         vectorstore = PineconeVectorStore.from_documents(
                 documents=chunks,
@@ -73,7 +72,7 @@ class DataProcessor:
         return vectorstore
 
     def load_vectorstore(self):
-        import os
+        
         os.environ["PINECONE_API_KEY"] = settings.pinecone_api_key
         logger.info("تحميل Pinecone...")
         return PineconeVectorStore(
