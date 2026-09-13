@@ -12,7 +12,7 @@ pinned: false
 
 
 > Intelligent chatbot powered by RAG (Retrieval Augmented Generation)
-> built for customer support automation.
+> built for customer support.
 
 
 
@@ -55,7 +55,7 @@ User → Frontend (Streamlit on Hugging Face)
          RAG Pipeline
           ↙        ↘
     Pinecone        Groq LLM
-   (Vector DB)    (LLaMA 3.1)
+   (Vector DB)    (openai/gpt-oss-20b)
         ↑
    Gemini Embeddings
 ```
@@ -66,7 +66,7 @@ User → Frontend (Streamlit on Hugging Face)
 
 | Component | Technology |
 |-----------|------------|
-| LLM | Groq (LLaMA 3.1-8b) |
+| LLM | Groq (openai/gpt-oss-20b) |
 | Embeddings | Google Gemini |
 | RAG Framework | LangChain |
 | Vector Database | Pinecone |
@@ -212,7 +212,6 @@ LangSmith tracks:
 - LLM prompt engineering
 - Cloud deployment and CI/CD
 - Debugging production issues
-- Git branching strategies
 
 ---
 
@@ -220,5 +219,5 @@ LangSmith tracks:
 
 **Tasneem AlNaasan**
 - GitHub: [@TasneemAlnaasan](https://github.com/TasneemAlnaasan)
-- LinkedIn: 
+- LinkedIn:https://www.linkedin.com/in/tasneem-alnaasan-9a5510431?utm_source=share_via&utm_content=profile&utm_medium=member_android
 ```
