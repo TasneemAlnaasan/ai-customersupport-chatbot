@@ -1,12 +1,16 @@
+"""
+data_processor.py: Data Processor
+Uses Pinecone 
+"""
 
+import os
 from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from src.utils.logger import get_logger
 from src.utils.config import settings
-from pinecone import Pinecone
-import os 
+
 
 logger = get_logger(__name__)
 
@@ -14,7 +18,10 @@ logger = get_logger(__name__)
 class DataProcessor:
 
     def __init__(self):
-        logger.info("تهيئة DataProcessor...")
+        logger.info("Initializing DataProcessor...")
+
+        # Set Pinecone API Key here
+        os.environ["PINECONE_API_KEY"] = settings.pinecone_api_key
 
         # Gemini Embeddings
         self.embeddings = GoogleGenerativeAIEmbeddings(
@@ -22,7 +29,7 @@ class DataProcessor:
             google_api_key=settings.gemini_api_key
         )
 
-        # Pinecone Client
+        # Pinecone Index Name
         self.index_name = "chatbot-index"
 
         # Text Splitter
@@ -33,10 +40,10 @@ class DataProcessor:
             separators=["\n\n", "\n", ".", " ", ""]
         )
 
-        logger.info("✅ DataProcessor جاهز!")
+        logger.info("✅ DataProcessor ready!")
 
     def load_documents(self):
-        logger.info(f"تحميل الملفات من {settings.raw_data_path}")
+        logger.info(f"Loading files from {settings.raw_data_path}")
         loader = DirectoryLoader(
             settings.raw_data_path,
             glob="**/*.txt",
@@ -44,37 +51,33 @@ class DataProcessor:
             loader_kwargs={"encoding": "utf-8"}
         )
         documents = loader.load()
-        logger.info(f"تم تحميل {len(documents)} ملف")
+        logger.info(f"Loaded {len(documents)} files")
         return documents
 
     def process(self):
-        # 1. Files Loading
+        # 1. Load files
         documents = self.load_documents()
         if not documents:
-            logger.warning("لا توجد ملفات!")
+            logger.warning("No files found!")
             return None
 
-        # 2.  Text splitting
+        # 2. Split text
         chunks = self.text_splitter.split_documents(documents)
-        logger.info(f"تم إنشاء {len(chunks)} chunk")
+        logger.info(f"Created {len(chunks)} chunks")
 
         # 3. Store in Pinecone
-        logger.info("حفظ في Pinecone...")
-    
-        os.environ["PINECONE_API_KEY"] = settings.pinecone_api_key
+        logger.info("Saving to Pinecone...")
         vectorstore = PineconeVectorStore.from_documents(
-                documents=chunks,
-                embedding=self.embeddings,
-                index_name=self.index_name
+            documents=chunks,
+            embedding=self.embeddings,
+            index_name=self.index_name
         )
 
-        logger.info("✅ تم الحفظ في Pinecone!")
+        logger.info("✅ Saved to Pinecone!")
         return vectorstore
 
     def load_vectorstore(self):
-        
-        os.environ["PINECONE_API_KEY"] = settings.pinecone_api_key
-        logger.info("تحميل Pinecone...")
+        logger.info("Loading Pinecone...")
         return PineconeVectorStore(
             index_name=self.index_name,
             embedding=self.embeddings
