@@ -59,10 +59,6 @@ with col1:
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
-            if msg["role"] == "assistant" and msg.get("sources"):
-                with st.expander("📚 المصادر"):
-                    for s in msg["sources"]:
-                        st.info(f"📄 {s.get('source', 'Unknown')}\n\n{s.get('content', '')}")
 
 # ===== Question processing ====
 user_input = st.chat_input("كيف يمكنني مساعدتك اليوم؟")
